@@ -28,6 +28,17 @@ con.connect(function (err) {
     if (err) throw  err;
     console.log("Connected to joga_mysql db");
 })
+app.get("/", (req, res) => {
+    let query = "select * from article";
+    let articles = []
+    con.query (query, (err, result) => {
+        if (err) throw err;
+        articles = result
+        res.render('index',{
+            articles: articles
+        })
+    })
+});
 app.listen(3000, () => {
     console.log("App is starrted at http://localhost:3000");
 })
