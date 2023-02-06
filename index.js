@@ -3,6 +3,7 @@ const app = express()
 
 const path = require('path')
 
+
 const hbs = require("express-handlebars");
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -38,20 +39,26 @@ app.get("/", (req, res) => {
             articles: articles
         })
     })
+
 });
 
 app.get('/article/:slug', (req, res) => {
-    let query = `select * from article where slug = "${req.params.slug}"`
+    let query =`
+        SELECT article.name, article.published, article.body, article.image, author.name as author_name
+    FROM article
+    JOIN author ON article.author_id = author.id
+    WHERE article.slug="${req.params.slug}"`
     let article
     con.query(query, (err, result) => {
         if (err) throw err;
-        article = result
-        console.log(article)
+        article = result[0];
         res.render('article', {
             article: article
         })
     })
 })
+
+
 
 app.listen(3000, () => {
     console.log("App is starrted at http://localhost:3000");
