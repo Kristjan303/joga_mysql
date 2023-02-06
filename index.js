@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
 
 app.get('/article/:slug', (req, res) => {
     let query =`
-        SELECT article.name, article.published, article.body, article.image, author.name as author_name
+        SELECT article.name, article.published, article.body, article.image, author.name as author_name, author.id as author_id
     FROM article
     JOIN author ON article.author_id = author.id
     WHERE article.slug="${req.params.slug}"`
@@ -57,6 +57,19 @@ app.get('/article/:slug', (req, res) => {
         })
     })
 })
+
+app.get('/author/:id', (req, res) => {
+    let authorId = req.params.id;
+    let query = `SELECT * from article JOIN author ON article.author_id = author.id where article.author_id = ${authorId}`;
+    let articles = [];
+    con.query(query, (err, result) => {
+        if (err) throw err;
+        articles = result;
+        res.render('index', {
+            articles: articles
+        });
+    });
+});
 
 
 
